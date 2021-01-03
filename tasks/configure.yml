@@ -45,4 +45,4 @@
     path: "{{ item.dest }}"
     state: "absent"
   with_items:
-  - { dest: "/srv/config/traefik/cfg/passthrough.yaml" }
+  - { dest: "/srv/config/traefik/cfg/{{ traefik_cfg }}.yaml" }
