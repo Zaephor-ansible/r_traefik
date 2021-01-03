@@ -32,7 +32,7 @@
   - "traefik_map is defined and traefik_map|length > 0"
   template:
     src: "config.yaml.j2"
-    dest: "/src/config/traefik/cfg/{{ traefik_cfg }}.yaml"
+    dest: "/srv/config/traefik/cfg/{{ traefik_cfg }}.yaml"
     owner: "root"
     group: "root"
     mode: "0640"
