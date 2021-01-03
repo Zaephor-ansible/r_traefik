@@ -24,12 +24,12 @@ http:
 {# Calculate priority fallthrough #}
 {%- set entry_priority = entry.priority if entry.priority is defined else false -%}
 {%- if entry_priority == false -%}
-  {%- set entry_priority = ((entry.path_prefix|default('')).split('/')|length) + (200 if entry.domain else 1) -%}
+  {%- set entry_priority = ((entry.path_prefix|default('')).split('/')|length) + (200 if entry.domain|default(false) else 1) -%}
 {%- endif -%}
     {{ traefik_cfg }}-{{ entry_id }}:
       service: "{{ traefik_cfg }}-{{ entry_id }}"
 {# TODO: Ugly conditional line, will see about making this more readable later #}
-      rule: "{% if entry.domain|default(false) %}Host(`{{ entry.domain }}`){% endif %}{% if (entry.domain|default(false)) and (entry.path_prefix|default(false)) %} && {% endif %}{% if entry.path_prefix|default(false) %}PathPrefix(`{{ entry.path_prefix }}`){% endif %}"
+      rule: "{% if entry.domain|default(false) %}Host(`{{ entry.domain|default(false) }}`){% endif %}{% if (entry.domain|default(false)) and (entry.path_prefix|default(false)) %} && {% endif %}{% if entry.path_prefix|default(false) %}PathPrefix(`{{ entry.path_prefix|default(false) }}`){% endif %}"
       priority: {{ entry_priority }}
 {# TODO: Detect if existing traefik container is configured for SSL or not #}
 {% if entry.ssl | default(false) %}
