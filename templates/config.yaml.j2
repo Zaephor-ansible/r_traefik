@@ -34,7 +34,7 @@ http:
       rule: "{% if entry.domain|default(false) %}Host(`{{ entry.domain|default(false) }}`){% endif %}{% if (entry.domain|default(false)) and (entry.path_prefix|default(false)) %} && {% endif %}{% if entry.path_prefix|default(false) %}PathPrefix(`{{ entry.path_prefix|default(false) }}`){% endif %}"
       priority: {{ entry_priority }}
 {# TODO: Detect if existing traefik container is configured for SSL or not #}
-{% if entry.ssl | default(false) %}
+{% if (entry.ssl if entry.ssl is defined else traefik_ssl) %}
       entryPoints:
       - websecure
       tls:
