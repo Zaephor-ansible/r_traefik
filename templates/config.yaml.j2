@@ -4,7 +4,7 @@ http:
 
   services:
 {% for entry in traefik_map %}
-{%- set entry_id = (entry.domain | default('')) + (entry.path_prefix|default('')) | replace('.','_') | replace('/','_') -%}
+{% set entry_id = ( (entry.domain | default('')) + (entry.path_prefix|default('')) ) | replace('.','_') | replace('/','_') %}
     {{ traefik_cfg }}-{{ entry_id }}:
       servers:
 {% for svr in entry.servers %}
@@ -16,16 +16,17 @@ http:
         interval: 15s
         timeout: 3s
 {% endif %}
+
 {% endfor %}
 
   routers:
 {% for entry in traefik_map %}
-{%- set entry_id = (entry.domain | default('')) + (entry.path_prefix|default('')) | replace('.','_') | replace('/','_') -%}
+{%- set entry_id = ( (entry.domain | default('')) + (entry.path_prefix|default('')) ) | replace('.','_') | replace('/','_') -%}
 {# Calculate priority fallthrough #}
 {%- set entry_priority = entry.priority if entry.priority is defined else false -%}
 {%- if entry_priority == false -%}
   {%- set entry_priority = ((entry.path_prefix|default('')).split('/')|length) + (200 if entry.domain|default(false) else 1) -%}
-{%- endif -%}
+{%- endif %}
     {{ traefik_cfg }}-{{ entry_id }}:
       service: "{{ traefik_cfg }}-{{ entry_id }}"
 {# TODO: Ugly conditional line, will see about making this more readable later #}
@@ -47,4 +48,5 @@ http:
       - {{ entry_middle }}
 {% endfor %}
 {% endif %}
+
 {% endfor %}
