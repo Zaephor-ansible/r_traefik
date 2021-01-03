@@ -1,2 +1,5 @@
 ---
 # defaults file for r_traefik
+traefik_ssl: false
+traefik_debug: false
+traefik_dashboard: false

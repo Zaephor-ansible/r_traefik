@@ -1,0 +1,45 @@
+---
+- name: "traefik container"
+  docker_container:
+    name: "traefik"
+    state: started
+    image: traefik:v2.3
+    comparisons:
+      '*': strict
+    restart_policy: unless-stopped
+    keep_volumes: no
+    ports: >-
+      {{ [
+      '80:80',
+      '443:443' if traefik_ssl | default(false) else false,
+      traefik_dashboard + ':8080' if traefik_dashboard | default(false) else false
+      ] | select | list }}
+    volumes:
+    - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    - /srv/config/traefik/cfg:/config
+    - /srv/config/traefik/acme:/acme
+    - /srv/config/traefik/log:/var/log
+    command: >-
+      --providers.file.watch=true
+      --providers.file.directory=/config
+      --providers.docker=true
+      --providers.docker.exposedByDefault=false
+      --entrypoints.web.address=:80
+      --serverstransport.insecureskipverify=true
+      {% if traefik_ssl | default(false) %}
+      --entrypoints.websecure.address=:443
+      {% endif %}
+      {% if traefik_le_email | default(false) %}
+      --certificatesResolvers.le.acme.email={{ traefik_le_email }}
+      --certificatesResolvers.le.acme.storage=/acme/acme.json
+      --certificatesResolvers.le.acme.httpChallenge.entryPoint=web
+      {% endif %}
+      {% if traefik_dashboard | default(false) %}
+      --api.insecure=true
+      --api.dashboard=true
+      {% endif %}
+      {% if traefik_debug | default(false) %}
+      --log.filePath=/var/log/traefik.log
+      --log.level=DEBUG
+      {% endif %}
+

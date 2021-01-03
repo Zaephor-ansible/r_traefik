@@ -1,0 +1,12 @@
+[http]
+  [http.routers]
+    [http.routers.redirecttohttps]
+      entryPoints = ["web"]
+      middlewares = ["httpsredirect@file"]
+      rule = "HostRegexp(`{host:.+}`)"
+      service = "noop@internal"
+      priority = 1
+
+  [http.middlewares]
+    [http.middlewares.httpsredirect.redirectScheme]
+      scheme = "https"

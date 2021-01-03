@@ -1,2 +1,4 @@
 ---
 # tasks file for r_traefik
+- include_tasks: docker.yml
+- include_tasks: configure.yml

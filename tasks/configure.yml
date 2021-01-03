@@ -1,0 +1,16 @@
+---
+- name: "Prepare static files"
+  when: "traefik_ssl | default(false) == item.ssl"
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+  - { src: "redirecttohttps.toml", dest: "/srv/config/traefik/cfg/redirecttohttps.toml", ssl: true }
+
+- name: "Cleanup unnecessary static files"
+  when: "traefik_ssl | default(false) != item.ssl"
+  file:
+    path: "{{ item.dest }}"
+    state: "absent"
+  with_items:
+  - { src: "redirecttohttps.toml", dest: "/srv/config/traefik/cfg/redirecttohttps.toml", ssl: true }
