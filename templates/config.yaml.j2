@@ -6,15 +6,16 @@ http:
 {% for entry in traefik_map %}
 {% set entry_id = ( (entry.domain | default('')) + (entry.path_prefix|default('')) ) | replace('.','_') | replace('/','_') %}
     {{ traefik_cfg }}-{{ entry_id }}:
-      servers:
+      loadbalancer:
+        servers:
 {% for svr in entry.servers %}
-      - url: {{ svr }}
+        - url: {{ svr }}
 {% endfor %}
 {% if entry.healthcheck | default(false) %}
-      healthCheck:
-        path: {{ entry.healthcheck }}
-        interval: 15s
-        timeout: 3s
+        healthCheck:
+          path: {{ entry.healthcheck }}
+          interval: 15s
+          timeout: 3s
 {% endif %}
 
 {% endfor %}
