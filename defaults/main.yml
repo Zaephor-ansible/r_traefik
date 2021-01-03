@@ -1,5 +1,7 @@
 ---
 # defaults file for r_traefik
+traefik_install: true
 traefik_ssl: false
 traefik_debug: false
 traefik_dashboard: false
+traefik_cfg: 'passthrough'

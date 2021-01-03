@@ -1,4 +1,16 @@
 ---
+- name: "Ensure traefik directories exist"
+  file:
+    path: "{{ item }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  with_items:
+  - "/srv/config/traefik/acme"
+  - "/srv/config/traefik/cfg"
+  - "/srv/config/traefik/log"
+
 - name: "Prepare static files"
   when: "traefik_ssl | default(false) == item.ssl"
   copy:
@@ -14,3 +26,23 @@
     state: "absent"
   with_items:
   - { src: "redirecttohttps.toml", dest: "/srv/config/traefik/cfg/redirecttohttps.toml", ssl: true }
+
+- name: "Configure external passthroughs"
+  when:
+  - "traefik_map is defined and traefik_map|length > 0"
+  template:
+    src: "config.yaml.j2"
+    dest: "/src/config/traefik/cfg/{{ traefik_cfg }}.yaml"
+    owner: "root"
+    group: "root"
+    mode: "0640"
+    force: "yes"
+
+- name: "Cleanup unnecessary passthrough"
+  when:
+  - "traefik_map is undefined or traefik_map|length == 0"
+  file:
+    path: "{{ item.dest }}"
+    state: "absent"
+  with_items:
+  - { dest: "/srv/config/traefik/cfg/passthrough.yaml" }
