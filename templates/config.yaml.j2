@@ -26,7 +26,7 @@ http:
 {# Calculate priority fallthrough #}
 {%- set entry_priority = entry.priority if entry.priority is defined else false -%}
 {%- if entry_priority == false -%}
-  {%- set entry_priority = ((entry.path_prefix|default('')).split('/')|length) + (200 if entry.domain|default(false) else 1) -%}
+  {%- set entry_priority = ((entry.path_prefix|default('')).split('/')|length) + (200 if entry.domain|default(false) else 5) -%}
 {%- endif %}
     {{ traefik_cfg }}-{{ entry_id }}:
       service: "{{ traefik_cfg }}-{{ entry_id }}"
