@@ -9,6 +9,11 @@
       '*': strict
     restart_policy: unless-stopped
     keep_volumes: no
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck"]
+      start_period: 5m
+      interval: "{{ healthcheck.interval | default('30s') }}"
+      timeout: "{{ healthcheck.timeout | default('3s') }}"
     ports: >-
       {{ [
       '80:80',
@@ -27,6 +32,9 @@
       --providers.docker.exposedByDefault=false
       --entrypoints.web.address=:80
       --serverstransport.insecureskipverify=true
+      --ping=true
+      --entryPoints.ping.address=:8082
+      --ping.entryPoint=ping
       {% if traefik_ssl | default(false) %}
       --entrypoints.websecure.address=:443
       {% endif %}

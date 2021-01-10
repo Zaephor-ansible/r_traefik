@@ -5,3 +5,6 @@ traefik_ssl: false
 traefik_debug: false
 traefik_dashboard: false
 traefik_cfg: 'passthrough'
+healthcheck:
+  interval: 30s
+  timeout: 3s
