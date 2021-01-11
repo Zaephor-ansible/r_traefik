@@ -10,7 +10,7 @@
     restart_policy: unless-stopped
     keep_volumes: no
     healthcheck:
-      test: ["CMD", "traefik", "healthcheck"]
+      test: ["CMD", "traefik", "healthcheck", "--entryPoints.ping.address=:8082", "--ping.entryPoint=ping"]
       start_period: 5m
       interval: "{{ healthcheck.interval | default('30s') }}"
       timeout: "{{ healthcheck.timeout | default('3s') }}"
