@@ -1,5 +1,6 @@
 ---
 - name: "Ensure traefik directories exist"
+  become: yes
   file:
     path: "{{ item }}"
     state: "directory"
@@ -12,6 +13,7 @@
   - "/srv/config/traefik/log"
 
 - name: "Prepare static files"
+  become: yes
   when: "traefik_ssl | default(false) == item.ssl"
   copy:
     src: "{{ item.src }}"
@@ -20,6 +22,7 @@
   - { src: "redirecttohttps.toml", dest: "/srv/config/traefik/cfg/redirecttohttps.toml", ssl: true }
 
 - name: "Cleanup unnecessary static files"
+  become: yes
   when: "traefik_ssl | default(false) != item.ssl"
   file:
     path: "{{ item.dest }}"
@@ -28,6 +31,7 @@
   - { src: "redirecttohttps.toml", dest: "/srv/config/traefik/cfg/redirecttohttps.toml", ssl: true }
 
 - name: "Configure external passthroughs"
+  become: yes
   when:
   - "traefik_map is defined and traefik_map|length > 0"
   template:
@@ -39,6 +43,7 @@
     force: "yes"
 
 - name: "Cleanup unnecessary passthrough"
+  become: yes
   when:
   - "traefik_map is undefined or traefik_map|length == 0"
   file:

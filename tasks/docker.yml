@@ -1,5 +1,6 @@
 ---
 - name: "traefik container"
+  become: yes
   when: "traefik_install"
   docker_container:
     name: "traefik"
