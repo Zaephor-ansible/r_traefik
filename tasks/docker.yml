@@ -6,8 +6,15 @@
     name: "traefik"
     state: started
     image: traefik:v2.3
+    pull: yes
     comparisons:
-      '*': strict
+      image: strict
+      command: strict
+      ports: strict
+      volumes: strict
+      env: strict
+      labels: strict
+      '*': ignore
     restart_policy: unless-stopped
     keep_volumes: no
     healthcheck:
